@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>asserts/js/nunjucks.js</file>
+        <file>asserts/project/filter.js</file>
+        <file>asserts/project/ui.json</file>
+        <file>asserts/project/readme.md</file>
+    </qresource>
+</RCC>
