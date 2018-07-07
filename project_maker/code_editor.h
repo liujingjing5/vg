@@ -34,6 +34,7 @@ public:
 
     virtual bool editorClose();
     virtual bool editorSave();
+    virtual QString editorFilePath();
 
     void keyPressEvent(QKeyEvent  *event);
 
@@ -51,11 +52,11 @@ public:
 private:
     QString filePath;
     QString charset;
-    GETSET_VALUE(public,bool, dirty)
+//    GETSET_VALUE(public,bool, dirty)
+    bool dirty;
     qint64 textChangeFlag;
     int selectChangeFlag;
 public:
-    virtual QString editorFilePath();
 
 
 };

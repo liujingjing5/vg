@@ -19,12 +19,14 @@
 #include <QJsonArray>
 #include "common/sg.h"
 #include "common/utils.h"
+#include "common/qobject_utils.h"
 #include "common/script_manager.h"
 #include "common/file_type/file_type_utils.h"
 
 #include "mainwindow.h"
 
 #include "project_maker/code_editor.h"
+#include "project_maker/params_defined_editor.h"
 
 
 
@@ -308,8 +310,8 @@ ProjectMakerWindow::ProjectMakerWindow(QString _prjName,QWidget *parent) :
     //treeParams///////////////////////////////////////
 
 
-    ui->treeParams->setContextMenuPolicy(Qt::CustomContextMenu);//自己拦截事件处理了
-    ui->treeParams->setSelectionMode(QAbstractItemView::ExtendedSelection);
+//    ui->treeParams->setContextMenuPolicy(Qt::CustomContextMenu);//自己拦截事件处理了
+//    ui->treeParams->setSelectionMode(QAbstractItemView::ExtendedSelection);
     ui->treeParams->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
     connect(ui->treeParams,&QTreeWidget::itemDoubleClicked,this,[=](QTreeWidgetItem *item, int column){
         if(item->parent()==NULL){
@@ -571,23 +573,28 @@ void ProjectMakerWindow::handleTreeDoubleClicked(QTreeWidgetItem *item, int colu
                 QMessageBox::warning(NULL,"警告","非文本文件，不可以编辑");
                 return;
             }
-            CodeEditor *editor=new CodeEditor(filepath,fileType.characterSet,this);
-            editor->setProperty("fileType",type);
-            ui->tabEditCode->insertTab(oldCurrIndex+1,editor,QApplication::style()->standardIcon(QStyle::SP_DialogYesButton),fileInfo.fileName());
-            ui->tabEditCode->setCurrentIndex(oldCurrIndex+1);
-            connect(editor,&CodeEditor::modificationChanged,this,[=](bool changed){
-                qDebug() << "changeddddd" << changed;
-                int atcindex = ui->tabEditCode->indexOf(editor);
-                if(atcindex!=-1){
-                    if(changed){
-                        ui->tabEditCode->setTabIcon(atcindex,QApplication::style()->standardIcon(QStyle::SP_DialogNoButton));
-                    }else{
-                        ui->tabEditCode->setTabIcon(atcindex,QApplication::style()->standardIcon(QStyle::SP_DialogYesButton));
+            QWidget *editor=NULL;
+            if(type==TreeSourceCodeDataTypeEnum::uijs){
+                ParamsDefinedEditor* editor = new ParamsDefinedEditor(filepath,this);
+                ui->tabEditCode->insertTab(oldCurrIndex+1,editor,QApplication::style()->standardIcon(QStyle::SP_DialogYesButton),fileInfo.fileName());
+                ui->tabEditCode->setCurrentIndex(oldCurrIndex+1);
+            }else{
+                CodeEditor* editor = new CodeEditor(filepath,fileType.characterSet,this);
+                editor->setProperty("fileType",type);
+                ui->tabEditCode->insertTab(oldCurrIndex+1,editor,QApplication::style()->standardIcon(QStyle::SP_DialogYesButton),fileInfo.fileName());
+                ui->tabEditCode->setCurrentIndex(oldCurrIndex+1);
+                connect(editor,&CodeEditor::modificationChanged,this,[=](bool changed){
+                    qDebug() << "changeddddd" << changed;
+                    int atcindex = ui->tabEditCode->indexOf(editor);
+                    if(atcindex!=-1){
+                        if(changed){
+                            ui->tabEditCode->setTabIcon(atcindex,QApplication::style()->standardIcon(QStyle::SP_DialogNoButton));
+                        }else{
+                            ui->tabEditCode->setTabIcon(atcindex,QApplication::style()->standardIcon(QStyle::SP_DialogYesButton));
+                        }
                     }
-                }
-            });
-
-
+                });
+            }
 
         }
     }
@@ -728,27 +735,38 @@ void ProjectMakerWindow::treeMenuRefresh(QTreeWidgetItem *item)
     this->refreshTreeSource();
 }
 
-void _collectParams(QTreeWidgetItem * parentWidgetItem, const QJsonObject & jsonObj){
-
-    QJsonObject::const_iterator ite;
-    for(ite=jsonObj.begin();ite!=jsonObj.end();ite++)
-    {
-        QString key = ite.key();
-        QTreeWidgetItem * child = new QTreeWidgetItem(parentWidgetItem);
-        child->setText(0,key);
-//        child -> setIcon(0, QApplication::style()->standardIcon(QStyle::SP_FileIcon));
-        parentWidgetItem -> addChild(child);
-        if(ite.value().isObject()){
-            _collectParams(child,QJsonObject(ite.value().toObject()));
+void _collectParams(QTreeWidgetItem * widgetItem,QString key, const QJsonValue& value){
+    if(value.isObject()){
+        widgetItem->setText(0,key);
+        QJsonObject::const_iterator ite;
+        QJsonObject jsonObj = value.toObject();
+        for(ite=jsonObj.begin();ite!=jsonObj.end();ite++)
+        {
+            QTreeWidgetItem * child = new QTreeWidgetItem(widgetItem);
+            widgetItem -> addChild(child);
+            QString _key = ite.key();
+            QJsonValue _value = ite.value();
+            _collectParams(child,_key,_value);
         }
+    }else if(value.isArray()){
+        widgetItem->setText(0,key);
+        QJsonArray jsonArr = value.toArray();
+        int i=0;
+        foreach (QJsonValue _value, jsonArr) {
+            QTreeWidgetItem * child = new QTreeWidgetItem(widgetItem);
+            widgetItem -> addChild(child);
+            QString _key = QString::number(i++);
+            _collectParams(child,_key,_value);
+        }
+    }else{
+        widgetItem->setText(0,key+": "+QObjectUtils::abbreviate(value.toString(),12));
     }
-
 }
 
 void ProjectMakerWindow::refreshTreeParams()
 {
     ui->treeParams->clear();
-    QTreeWidgetItem *rootItem = new QTreeWidgetItem(ui->treeParams,QStringList("刷新"));
+    QTreeWidgetItem *rootItem = new QTreeWidgetItem(ui->treeParams);
     rootItem->setIcon(0,ui->treeSourceFile->style()->standardIcon(QStyle::SP_BrowserReload));
     rootItem->setExpanded(true);
 
@@ -782,7 +800,7 @@ void ProjectMakerWindow::refreshTreeParams()
         QMessageBox::critical(NULL,"过滤器错误", jsonDocPlus.object().value("message").toString());
         return;
     }
-    _collectParams(rootItem,jsonDocPlus.object());
+    _collectParams(rootItem,"刷新",jsonDocPlus.object());
     QString paramsStr(jsonDocPlus.toJson());
     qDebug() <<"paramsStr:"<< paramsStr;
 

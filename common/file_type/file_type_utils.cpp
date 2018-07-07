@@ -23,6 +23,7 @@ FileTypeKey::~FileTypeKey()
 bool FileTypeKey::operator<(const FileTypeKey &fileTypeKey) const
 {
     int minSize = std::min(this->key_.length(),fileTypeKey.key_.length());
+    qDebug() <<"operator < "<< QStringRef(&(this->key_),0,minSize) << QStringRef(&(fileTypeKey.key_),0,minSize);
     return QStringRef(&(this->key_),0,minSize) < QStringRef(&(fileTypeKey.key_),0,minSize);
 
 }
@@ -45,13 +46,13 @@ QMap<FileTypeKey,QString> typemap = {
     {QString("010F0000"),"mdf"},
     {QString("0110"),"tr1"},
     {QString("01DA01010003"),"rgb"},
-    {QString("07"),"drw"},
+//    {QString("07"),"drw"},
     {QString("02647373"),"dss"},
     {QString("A90D000000000000"),"dat"},
-    {QString("03"),"db3"},
+//    {QString("03"),"db3"},
     {QString("03000000"),"qph"},
     {QString("80000020031204"),"adx"},
-    {QString("04"),"db4"},
+//    {QString("04"),"db4"},
     {QString("FFFE0000"),"n"},
     {QString("FFFE0000"),"a"},
     {QString("07534B46"),"skf"},
@@ -90,7 +91,7 @@ QMap<FileTypeKey,QString> typemap = {
     {QString("2E524D46"),"rmvb"},
     {QString("2E7261FD00"),"ra"},
     {QString("646E732E"),"au"},
-    {QString("30"),"cat"},
+//    {QString("30"),"cat"},
     {QString("300000004C664C65"),"evt"},
     {QString("3026B2758E66CF11"),"asf"},
     {QString("3026B2758E66CF11"),"wma"},
@@ -99,8 +100,8 @@ QMap<FileTypeKey,QString> typemap = {
     {QString("377ABCAF271C"),"7z"},
     {QString("38425053"),"psd"},
     {QString("414376"),"sle"},
-    {QString("3C"),"asx"},
-    {QString("3C"),"xdr"},
+//    {QString("3C"),"asx"},
+//    {QString("3C"),"xdr"},
     {QString("3C21646F63747970"),"dci"},
     {QString("3C3F786D6C2076657273696F6E3D"),"manifest"},
     {QString("3C3F786D6C2076657273696F6E3D22312E30223F3E"),"xml"},
@@ -167,7 +168,7 @@ QMap<FileTypeKey,QString> typemap = {
     {QString("4B47425F61726368"),"kgb"},
     {QString("68490000"),"shd"},
     {QString("4C00000001140200"),"lnk"},
-    {QString("80"),"obj"},
+//    {QString("80"),"obj"},
     {QString("ACED000573720012"),"pdb"},
     {QString("4D41723000"),"mar"},
     {QString("504147454455"),"dmp"},
@@ -183,7 +184,7 @@ QMap<FileTypeKey,QString> typemap = {
     {QString("4D546864"),"mid"},
     {QString("4D546864"),"midi"},
     {QString("4D56"),"dsn"},
-    {QString("EB"),"com"},
+//    {QString("EB"),"com"},
     {QString("4D5A"),"dll"},
     {QString("4D5A"),"drv"},
     {QString("4D5A"),"exe"},
@@ -285,7 +286,7 @@ QMap<FileTypeKey,QString> typemap = {
     {QString("6C33336C"),"dbb"},
     {QString("72696666"),"acd"},
     {QString("727473703A2F2F"),"ram"},
-    {QString("78"),"dmg"},
+//    {QString("78"),"dmg"},
     {QString("7B0D0A6F20"),"lgc"},
     {QString("7B0D0A6F20"),"lgd"},
     {QString("7B5C707769"),"pwi"},
@@ -296,7 +297,7 @@ QMap<FileTypeKey,QString> typemap = {
     {QString("8A0109000000E108"),"aw"},
     {QString("91334846"),"hap"},
     {QString("9501"),"skr"},
-    {QString("99"),"gpg"},
+//    {QString("99"),"gpg"},
     {QString("9901"),"pkr"},
     {QString("AC9EBD8F0000"),"qdf"},
     {QString("E3828596"),"pwl"},
@@ -351,6 +352,7 @@ QMap<FileTypeKey,QString> typemap = {
 
 FileType findFileType(const QString &hexStr)
 {
+    qDebug() << "findFileType hexStr:" << hexStr;
     QString type;
     if(!hexStr.isEmpty()){
         type = typemap.value(FileTypeKey(hexStr));

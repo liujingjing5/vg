@@ -190,14 +190,6 @@ bool mv(const QString &source, const QString &destination)
     return false;
 }
 
-QString file(const QString &filePath)
-{
-    QProcess process;
-    process.start("file", QStringList()<< filePath );
-    process.waitForFinished();
-    QString outStr = QString(process.readAllStandardOutput());
-    return outStr;
-}
 
 
 

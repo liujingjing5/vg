@@ -34,7 +34,13 @@ SOURCES += \
     mainwindow.cpp \
     project_maker_window.cpp \
     project_maker/code_editor.cpp \
-    common/file_type/file_type_utils.cpp
+    common/file_type/file_type_utils.cpp \
+    project_maker/params_defined_editor.cpp \
+    project_maker/params_defined_dialog.cpp \
+    common/widget_utils.cpp \
+    common/qobject_utils.cpp \
+    common/params_defined.cpp \
+    common/sg.cpp
 
 
 HEADERS += \
@@ -50,11 +56,18 @@ HEADERS += \
     project_maker_window.h \
     project_maker/code_editor.h \
     project_maker/ieditor.h \
-    common/file_type/file_type_utils.h
+    common/file_type/file_type_utils.h \
+    project_maker/params_defined_editor.h \
+    project_maker/params_defined_dialog.h \
+    common/widget_utils.h \
+    common/qobject_utils.h \
+    common/params_defined.h
 
 FORMS += \
         mainwindow.ui \
-    project_maker_window.ui
+    project_maker_window.ui \
+    project_maker/params_defined_editor.ui \
+    project_maker/params_defined_dialog.ui
 
 DISTFILES +=
 

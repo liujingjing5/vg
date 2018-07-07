@@ -23,7 +23,6 @@ namespace utils {
 
     bool remove(const QString &dirName);
 
-    QString file(const QString& file );
 }
 
 

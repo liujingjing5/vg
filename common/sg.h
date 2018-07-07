@@ -3,6 +3,7 @@
 
 
 #include <stddef.h>
+#include <mutex>
 /**
  * 单例模式
  */
@@ -14,16 +15,23 @@ public:
     static void release();
 private:
     sg(){}
+    static std::mutex mtx;
     static T* __instance__;
 };
 
 template<typename T>
-T* sg<T>::__instance__ ;
+T* sg<T>::__instance__ = NULL;
+
+template<typename T>
+std::mutex sg<T>::mtx;
 
 template<typename T>
 T* sg<T>::get(){
     if(! sg<T>::__instance__){
-        sg<T>::__instance__ = new T;
+        std::lock_guard<std::mutex> _lock(mtx);
+        if(! sg<T>::__instance__){
+            sg<T>::__instance__ = new T;
+        }
     }
     return __instance__;
 }

@@ -24,6 +24,7 @@
 #include <common/flowlayout.h>
 #include "common/sg.h"
 #include "common/utils.h"
+#include "common/widget_utils.h"
 #include "common/template_manager.h"
 #include "common/script_manager.h"
 #include "project_maker_window.h"
@@ -201,7 +202,7 @@ void MainWindow::handleCbxProjectChange(int index)
                 QJsonParseError error;
                 QJsonDocument doc = QJsonDocument::fromJson(data,&error);
                 if(error.error != QJsonParseError::NoError){
-                    QMessageBox::critical(NULL,"参数输入界面定义错误", error.errorString());
+                    QMessageBox::critical(NULL,"参数定义错误", error.errorString());
                     return;
                 }
                 qDebug()<< QString(doc.toJson());
@@ -237,9 +238,6 @@ void MainWindow::handleCbxProjectChange(int index)
                     }else if(type==PrjItemTypeEnum::select){
                         QComboBox * paramItem = new QComboBox(ui->groupVarsetting);
                         paramItem->setObjectName("__ui_"+id);
-                        if(!value.isNull()){
-    //                        paramItem->setText(value);
-                        }
                         paramItem->setProperty(PrjItemEnum::prop,QVariant(itemObj));
                         QJsonArray options = itemObj.value("options").toArray();
 
@@ -249,12 +247,12 @@ void MainWindow::handleCbxProjectChange(int index)
                             paramItem->addItem(name,QVariant(value));
                         }
                         paramItemWidget = paramItem;
+                        if(!value.isNull()){
+                            WidgetUtils::setQComboData(paramItem,value.toString());
+                        }
                     }else if(type==PrjItemTypeEnum::checkbox){
                         QGroupBox * paramItem = new QGroupBox(ui->groupVarsetting);
                         paramItem->setObjectName("__ui_"+id);
-                        if(!value.isNull()){
-    //                        paramItem->setText(value);
-                        }
                         paramItem->setProperty(PrjItemEnum::prop,QVariant(itemObj));
                         QJsonArray options = itemObj.value("options").toArray();
 
@@ -271,6 +269,9 @@ void MainWindow::handleCbxProjectChange(int index)
                         }
     //                    radioLayout->addItem(new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum));
                         paramItemWidget = paramItem;
+                        if(!value.isNull()){
+                            WidgetUtils::setQCheckBoxs(paramItem,value.toArray());
+                        }
                     }
 
                     if(paramItemWidget!=NULL){
