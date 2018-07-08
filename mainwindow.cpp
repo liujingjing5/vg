@@ -419,7 +419,7 @@ void MainWindow::setProjectParamsValues(const QJsonObject& jsonObj){
 
 void MainWindow::handleBtnCodeGen(bool show)
 {
-
+    BizError er;
     QString targetPathStr = this->ui->textTargetPath->text();
     QString prjName = this->ui->cbxProject->currentText();
     if(prjName.isEmpty()){
@@ -432,7 +432,7 @@ void MainWindow::handleBtnCodeGen(bool show)
     }
         QDir targetDir(targetPathStr);
         if(!targetDir.exists()){
-            targetDir.mkdir(".");
+            targetDir.mkpath(".");
         }
         bool isOk;
         QJsonObject jsonObj = getProjectParamsValues(true,&isOk);
@@ -472,7 +472,11 @@ void MainWindow::handleBtnCodeGen(bool show)
                         QMessageBox::critical(NULL,"文件模版渲染错误",tempfileInfo.filePath()+":\r\n"+result);
                         return;
                     }
-                    utils::writeQStringToFile(result,targetFile,fileType.characterSet);
+                    utils::writeQStringToFile(result,targetFile,fileType.characterSet,&er);
+                    if(er){
+                        QMessageBox::critical(NULL,"路径模版渲染错误",targetFile+":\r\n"+er.message());
+                        return;
+                    }
     //                QString targetDirStr = tempfileInfo.dir().path().replace(templateDir.path(),"");
     //                targetDir.mkpath(targetDirStr);
                     qDebug()<<"生成文件:"<<targetFile;
@@ -552,11 +556,11 @@ void MainWindow::handleProjectModify()
     if(!prjName.isEmpty()){
         QFileInfo projectFileInfo(QString("data/projects/")+prjName);
         if(!projectFileInfo.exists()){
-            QDir(projectFileInfo.filePath()).mkdir(".");
+            QDir(projectFileInfo.filePath()).mkpath(".");
         }
         QDir projectDir(projectFileInfo.filePath());
         if(!projectDir.exists("template")){
-            QDir(projectFileInfo.filePath()+("/template")).mkdir(".");
+            QDir(projectFileInfo.filePath()+("/template")).mkpath(".");
         }
         if(!projectDir.exists("ui.json")){
             QString uiStr = utils::readFileToQString(":/asserts/project/ui.json");

@@ -620,7 +620,7 @@ void ProjectMakerWindow::treeMenuAddDir(QTreeWidgetItem* item){
                 QMessageBox::warning(this, "警告","已存在");
                 return;
             }
-            QDir(newDirPath).mkdir(".");
+            QDir(newDirPath).mkpath(".");
             QTreeWidgetItem * child = new QTreeWidgetItem(item);
             child->setText(0,name);
             child ->setIcon(0, QApplication::style()->standardIcon(QStyle::SP_DirIcon));

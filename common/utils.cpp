@@ -34,10 +34,11 @@ QFileInfoList listFileInfoList(QString dirpath,QDir::Filters findFlag, QDir::Sor
     return fileInfoList;
 }
 
-QString readFileToQString(QString path, QString charset)
+QString readFileToQString(QString path, QString charset,BizError* er)
 {
     QFile file(path);
     if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
+        if(er) er->error("文件打开错误");
         return "";
     }else{
         QByteArray data = file.readAll();
@@ -52,13 +53,13 @@ QString readFileToQString(QString path, QString charset)
 
 }
 
-void writeQStringToFile(QString content, QString path, QString charset)
+void writeQStringToFile(QString content, QString path, QString charset,BizError* er)
 {
     QFileInfo fileInfo(path);
     QFile file(path);
-    fileInfo.dir().mkdir(".");
+    fileInfo.dir().mkpath(".");
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text)){
-
+        if(er) er->error("文件打开错误");
     }else{
         if(charset.toLower()=="gbk"){
             QTextCodec *codec = QTextCodec::codecForName("gbk");

@@ -23,7 +23,7 @@ FileTypeKey::~FileTypeKey()
 bool FileTypeKey::operator<(const FileTypeKey &fileTypeKey) const
 {
     int minSize = std::min(this->key_.length(),fileTypeKey.key_.length());
-    qDebug() <<"operator < "<< QStringRef(&(this->key_),0,minSize) << QStringRef(&(fileTypeKey.key_),0,minSize);
+//    qDebug() <<"operator < "<< QStringRef(&(this->key_),0,minSize) << QStringRef(&(fileTypeKey.key_),0,minSize);
     return QStringRef(&(this->key_),0,minSize) < QStringRef(&(fileTypeKey.key_),0,minSize);
 
 }
@@ -103,8 +103,8 @@ QMap<FileTypeKey,QString> typemap = {
 //    {QString("3C"),"asx"},
 //    {QString("3C"),"xdr"},
     {QString("3C21646F63747970"),"dci"},
-    {QString("3C3F786D6C2076657273696F6E3D"),"manifest"},
-    {QString("3C3F786D6C2076657273696F6E3D22312E30223F3E"),"xml"},
+//    {QString("3C3F786D6C2076657273696F6E3D"),"manifest"},
+//    {QString("3C3F786D6C2076657273696F6E3D22312E30223F3E"),"xml"},
     {QString("D0CF11E0A1B11AE1"),"msc"},
     {QString("3C4D616B65724669"),"fm"},
     {QString("56657273696F6E20"),"mif"},

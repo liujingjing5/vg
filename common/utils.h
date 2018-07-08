@@ -5,14 +5,15 @@
 #include <QString>
 #include <QDir>
 #include <QFile>
+#include "common/biz_error.h"
 
 namespace utils {
 
     QFileInfoList listFileInfoList(QString dirpath,QDir::Filters findFlag=QDir::Files | QDir::Dirs | QDir::NoSymLinks,QDir::SortFlags sortFlag=QDir::Name);
 
-    QString readFileToQString(QString path,QString charset="utf-8");
+    QString readFileToQString(QString path,QString charset="utf-8",BizError* er=NULL);
 
-    void writeQStringToFile(QString content,QString path,QString charset="utf-8");
+    void writeQStringToFile(QString content,QString path,QString charset="utf-8",BizError* er=NULL);
 
     bool rename(const QString &source, const QString &newName);
 

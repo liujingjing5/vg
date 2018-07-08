@@ -40,7 +40,8 @@ SOURCES += \
     common/widget_utils.cpp \
     common/qobject_utils.cpp \
     common/params_defined.cpp \
-    common/sg.cpp
+    common/sg.cpp \
+    common/biz_error.cpp
 
 
 HEADERS += \
@@ -61,7 +62,8 @@ HEADERS += \
     project_maker/params_defined_dialog.h \
     common/widget_utils.h \
     common/qobject_utils.h \
-    common/params_defined.h
+    common/params_defined.h \
+    common/biz_error.h
 
 FORMS += \
         mainwindow.ui \
